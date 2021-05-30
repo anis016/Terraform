@@ -1,0 +1,71 @@
+## Terraform command
+
+# initialize the Terraform
+$ terraform init
+
+# formats the terraform code and -diff shows the differences made in the Terraform state
+$ terraform fmt [-diff]
+
+# view the terraform state without accessing the tfstate file
+$ terraform show [-json | jq]
+
+# shows all resources within the state
+$ terraform state list
+
+# cli tool for terraform
+$ terraform console
+> docker_container.nodered_container.name
+"nodered"
+> docker_container.nodered_container.hostname
+
+# output the terraform state information 
+$ terraform output
+
+# create an execution plan
+$ terraform plan
+$ terraform plan -out=plan1 [output to a file]
+$ terraform plan -destroy [shows the execution plan for the destroy]
+
+# executes the actions proposed in a Terraform plan
+$ terraform apply
+$ terraform apply [--auto-approve]
+$ terraform apply plan1 [run the plan from the plan file]
+
+# destroy
+$ terraform destroy [--auto-approve]
+
+## Terraform terminology
+
+# TF providers: https://registry.terraform.io/browse/providers
+Terraform relies on plugins called "providers" to interact with remote systems.
+Terraform configurations must declare which providers they require, so that Terraform can install and use them. 
+
+terraform {
+  required_providers {
+    docker = {
+        source = "kreuzwerker/docker"
+        version = "2.12.0"
+    }
+  }
+}
+
+# TF resource:
+A resource block describes one or more infrastructure objects, such as virtual networks, compute instances, or higher-level components such as DNS records.
+A resource block declares a resource of a given type ("docker_image") with a given local name ("nodered_image").
+The name is used to refer to this resource from elsewhere in the same Terraform module, but has no significance outside that module's scope.
+
+resource "docker_image" "nodered_image" {
+  name = "nodered/node-red:latest"
+}
+
+Each resource type is implemented by a provider (provider is a plugin for Terraform that offers a collection of resource types)
+
+# TF provision: https://www.terraform.io/docs/cli/run/index.html
+Create, modify, and destroy infrastructure resources to match the desired state described in a Terraform configuration.
+
+# TF expressions: https://www.terraform.io/docs/language/expressions/index.html
+Expressions are used to refer to or compute values within a configuration.
+
+# Docker prune
+$ docker system prune -a
+
