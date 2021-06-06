@@ -5,7 +5,7 @@
 [TF providers](https://registry.terraform.io/browse/providers):
 Terraform relies on plugins called `providers` to interact with remote systems.
 
-Terraform configurations must declare which providers they require, so that Terraform can install and use them. 
+Terraform configurations must declare which providers they require, so that Terraform can install and use them.
 
 ```
 terraform {
@@ -35,37 +35,42 @@ Each resource type is implemented by a provider (provider is a plugin for Terraf
 
 ## TF provision
 
-[TF provision](https://www.terraform.io/docs/cli/run/index.html): 
+[TF provision](https://www.terraform.io/docs/cli/run/index.html):
 Create, modify, and destroy infrastructure resources to match the desired state described in a Terraform configuration.
 
 ## TF expressions
 
-[TF expressions](https://www.terraform.io/docs/language/expressions/index.html): 
+[TF expressions](https://www.terraform.io/docs/language/expressions/index.html):
 Expressions are used to refer to or compute values within a configuration.
 
 ## Terraform command
 
-* Initialize the Terraform
+- Initialize the Terraform
+
   ```
   $ terraform init
   ```
 
-* Formats the terraform code and `-diff` shows the differences made in the Terraform state
+- Formats the terraform code and `-diff` shows the differences made in the Terraform state
+
   ```
   $ terraform fmt [-diff]
   ```
 
-* View the terraform state without accessing the `tfstate` file
+- View the terraform state without accessing the `tfstate` file
+
   ```
   $ terraform show [-json | jq]
   ```
 
-* Shows all resources within the state
+- Shows all resources within the state
+
   ```
   $ terraform state list
   ```
 
-* Cli tool for terraform
+- CLI tool for terraform
+
   ```
   $ terraform console
   > docker_container.nodered_container.name
@@ -73,33 +78,102 @@ Expressions are used to refer to or compute values within a configuration.
   > docker_container.nodered_container.hostname
   ```
 
-* Output the terraform state information 
+- Splat expression `[*]` that takes the lists
+
+  ```
+  $ terraform console
+  > docker_container.nodered_container[*].name
+  [
+    "nodered-a0rp",
+    "nodered-isr5",
+    "nodered-lhjc",
+  ]
+  ```
+
+- For loops
+
+  ```
+  $ terraform console
+  > for i in docker_container.nodered_container[*]: i.ports]
+  [
+  tolist([
+    {
+      "external" = 49154
+      "internal" = 1880
+      "ip" = "0.0.0.0"
+      "protocol" = "tcp"
+    },
+  ]),
+  tolist([
+    {
+      "external" = 49153
+      "internal" = 1880
+      "ip" = "0.0.0.0"
+      "protocol" = "tcp"
+    },
+  ]),
+  tolist([
+    {
+      "external" = 49155
+      "internal" = 1880
+      "ip" = "0.0.0.0"
+      "protocol" = "tcp"
+    },
+  ]),
+  ]
+
+  > [for i in docker_container.nodered_container[*]: i.ports[0]["external"]]
+  [
+    49154,
+    49153,
+    49155,
+  ]
+
+  > [for i in docker_container.nodered_container[*]: i.ports[0]["internal"]]
+  [
+    1880,
+    1880,
+    1880,
+  ]
+
+  > [for i in docker_container.nodered_container[*]: join(":", [i.ip_address, i.ports[0].external])]
+  [
+    "172.17.0.3:49154",
+    "172.17.0.2:49153",
+    "172.17.0.4:49155",
+  ]
+  ```
+
+- Output the terraform state information
+
   ```
   $ terraform output
   ```
 
-* Create an execution plan
+- Create an execution plan
+
   ```
   $ terraform plan
   $ terraform plan -out=plan1 [output to a file]
   $ terraform plan -destroy [shows the execution plan for the destroy]
   ```
 
-* Executes the actions proposed in a Terraform plan
+- Executes the actions proposed in a Terraform plan
+
   ```
   $ terraform apply
   $ terraform apply [--auto-approve]
   $ terraform apply plan1 [run the plan from the plan file]
   ```
 
-* Destroy
+- Destroy
   ```
   $ terraform destroy [--auto-approve]
   ```
 
 ## Other commands
 
-* Docker prune all the images, containers, networks, and volumes
+- Docker prune all the images, containers, networks, and volumes
   ```
   $ docker system prune -a
   ```
