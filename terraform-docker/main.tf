@@ -19,20 +19,20 @@ resource "docker_image" "nodered_image" {
   name = "nodered/node-red:latest"
 }
 
-# Create 3 random string for 2 docker container
+# Create 1 random string for 1 docker container
 # https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string
 resource "random_string" "random" {
-  count = 3
+  count = 1
   length = 4
   special = false
   upper = false
 }
 
-# Create 3 containers randomly generated using 3 "random_string" resource
+# Create 1 containers randomly generated using 1 "random_string" resource
 # nodered_container - name of the resource
 # nodered           - name of the docker container
 resource "docker_container" "nodered_container" {
-  count = 3
+  count = length(random_string.random)
   name  = join("-", ["nodered", random_string.random[count.index].result])
   image = docker_image.nodered_image.latest
   hostname = join(".", [random_string.random[count.index].result, "nodered", "com"])
